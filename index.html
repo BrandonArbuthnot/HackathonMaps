@@ -2,26 +2,118 @@
 <html>
   <head>
     <style>
-      #map {
-        width: 500px;
-        height: 400px;
-      }
+      html, body, #map { margin: 0; padding: 0; height: 100%; }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?libraries=visualization">
+    </script>
+
     <script>
-      function initialize() {
-        var mapCanvas = document.getElementById('map');
-        var mapOptions = {
-          center: new google.maps.LatLng(44.5403, -78.5463),
-          zoom: 8,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
-        }
-        var map = new google.maps.Map(mapCanvas, mapOptions)
-      }
-      google.maps.event.addDomListener(window, 'load', initialize);
+		var xmlhttp = new XMLHttpRequest();
+		var url = 'https://cdn.rawgit.com/Hackalist/Hackalist.github.io/master/api/1.0/2015/10.json';
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				getCities(xmlhttp.responseText);
+			}
+		}
+		xmlhttp.open("GET", url, true);
+		xmlhttp.send();
+		function getCities(responseText) {
+			var arr = JSON.parse(responseText);
+			var i;
+			var locations = [];
+			for (i = 0; i < arr['October'].length; i++){
+				if ((arr['October'][i]['city']).indexOf('United States') > -1) {
+				locations.push(arr['October'][i]['city']);
+			}
+			}
+			for (i = 0; i <= 10; i++) {
+					GeoLocation = codeAddress(locations[i]);
+					addMarker(GeoLocation);
+					console.log(i + '.) ' +locations[i]);
+				}
+				setTimeout(function(){secondFunction(locations)}, 3500)
+			}
+
+		function secondFunction(thestuff){
+			for (i = 11; i < thestuff.length; i++) {
+			console.log(i + '.) ' + thestuff[i]);
+			GeoLocation = codeAddress(thestuff[i]);
+			addMarker(GeoLocation)
+		}
+		}
+		var xmlhttp2 = new XMLHttpRequest();
+		var url2 = 'https://cdn.rawgit.com/Hackalist/Hackalist.github.io/master/api/1.0/2015/11.json';
+		xmlhttp2.onreadystatechange = function() {
+			if (xmlhttp2.readyState == 4 && xmlhttp2.status == 200) {
+				setTimeout(function(){getCities2(xmlhttp2.responseText);}, 12000);
+			}
+		}
+		xmlhttp2.open("GET", url2, true);
+		xmlhttp2.send();
+		function getCities2(responseText) {
+		 	var arr2 = JSON.parse(responseText);
+		 	var i;
+			var locations2 = [];
+			for (i = 0; i < arr2['November'].length; i++){
+				if ((arr2['November'][i]['city']).indexOf('United States') > -1) {
+				locations2.push(arr2['November'][i]['city']);
+			}
+		}
+		for (i = 0; i <= 10; i++) {
+				GeoLocation = codeAddress(locations2[i]);
+				addMarker(GeoLocation);
+				console.log((i+14) + '.) ' +locations2[i]);
+			}
+			setTimeout(function(){thirdFunction(locations2)}, 3500)
+		}
+
+	function thirdFunction(thestuff){
+		for (i = 8; i < thestuff.length; i++) {
+		console.log((i+14) + '.) ' + thestuff[i]);
+		GeoLocation = codeAddress(thestuff[i]);
+		addMarker(GeoLocation)
+	}
+	}
+
+		var map;
+
+		function initialize() {
+			geocoder = new google.maps.Geocoder();
+		  var mapOptions = {
+		    zoom: 4,
+		    center: {lat: 35, lng: -97},
+		    mapTypeId: google.maps.MapTypeId.TERRAIN
+		  };
+
+		  map = new google.maps.Map(document.getElementById('map'),
+		      mapOptions);
+		}
+		function codeAddress(address) {
+			var geocoder = new google.maps.Geocoder;
+		    geocoder.geocode( { 'address': address}, function(results, status) {
+		      if (status == google.maps.GeocoderStatus.OK) {
+		        var marker = new google.maps.Marker({
+		            map: map,
+		            position: results[0].geometry.location
+		        });
+		      } else {
+		        alert("Geocode was not successful for the following reason: " + status);
+		      }
+		    });
+		  }
+		// Adds a marker to the map.
+		function addMarker(location) {
+        marker = new google.maps.Marker({
+            position: location,
+            map: map
+        });
+    }
+		google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body>
+
     <div id="map"></div>
   </body>
 </html>
