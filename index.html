@@ -2,14 +2,17 @@
 <html>
   <head>
     <style>
-      html, body, #map { margin: 0; padding: 0; height: 100%; }
+      html, body, #map { margin: 0; padding: 0; height: 90%; }
     </style>
+    <link rel="stylesheet" type="text/css" href="../HackathonMaps/css/bootstrap.css">
     <script
       src="https://maps.googleapis.com/maps/api/js?libraries=visualization">
     </script>
 
     <script>
 		var xmlhttp = new XMLHttpRequest();
+    var strKent;
+    var strYHacks;
 		var url = 'https://cdn.rawgit.com/Hackalist/Hackalist.github.io/master/api/1.0/2015/10.json';
 		xmlhttp.onreadystatechange = function() {
 			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
@@ -22,31 +25,48 @@
 			var arr = JSON.parse(responseText);
 			var i;
 			var locations = [];
+			var strprint = [];
 			for (i = 0; i < arr['October'].length; i++){
 				if ((arr['October'][i]['city']).indexOf('United States') > -1) {
 				locations.push(arr['October'][i]['city']);
+				strprint.push('<div id="content">'+
+      '<div id="siteNotice">'+
+      '</div>'+
+      '<h1 id="firstHeading" class="firstHeading">Event: <a href=' + arr['October'][i]['url'] + '>' + arr['October'][i]['title'] +'</a></h1>'+
+      '<div id="bodyContent">'+
+      '<p><b>Location: </b>' + arr['October'][i]['city'] +
+      '.<br><b>Hosted by:</b> ' + arr['October'][i]['host'] +
+			'.<br><b>Dates:</b> ' + arr['October'][i]['startDate'] + ' - ' + arr['October'][i]['endDate'] +
+      '<br><b>Length:</b> ' + arr['October'][i]['length'] + ' Hours' +
+      '<br><b>Size:</b> about ' + arr['October'][i]['size'] + ' people</p>'+
+      '</div>'+
+      '</div>');
 			}
 			}
+      alert('Pause for Presentation');
+
 			for (i = 0; i <= 10; i++) {
 				if (i < 6) {
-					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', strprint[i]);
 				}
-				else if (i > 5 && i < 9) {
-					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+				else if (i > 5 && i < 9 && locations[i].indexOf('Kent') < 0) {
+					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/green-dot.png', strprint[i]);
 				}
-				else {
-					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
-				}
+				else if (locations[i].indexOf('Kent') < 0){
+					GeoLocation = codeAddress(locations[i], 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', strprint[i]);
+				} else {
+          strKent = strprint[i];
+        }
 					//addMarker(GeoLocation);
 					console.log((i+1) + '.) ' +locations[i]);
 				}
-				setTimeout(function(){secondFunction(locations)}, 3500)
+				setTimeout(function(){secondFunction(locations, strprint)}, 3500)
 			}
 
-		function secondFunction(thestuff){
+		function secondFunction(thestuff, strprint){
 			for (i = 11; i < thestuff.length; i++) {
 			console.log((i+1) + '.) ' + thestuff[i]);
-			GeoLocation = codeAddress(thestuff[i], 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+			GeoLocation = codeAddress(thestuff[i], 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png', strprint[i]);
 			//addMarker(GeoLocation)
 		}
 		}
@@ -63,46 +83,44 @@
 		 	var arr2 = JSON.parse(responseText);
 		 	var i;
 			var locations2 = [];
-			var strprint = [];
-			var labelb = [];
+			var strprint2 = [];
+			var labelb = []
 			for (i = 0; i < arr2['November'].length; i++){
 				if ((arr2['November'][i]['city']).indexOf('United States') > -1) {
 				locations2.push(arr2['November'][i]['city']);
-				strprint.push('<div id="content">'+
+				strprint2.push('<div id="content">'+
       '<div id="siteNotice">'+
       '</div>'+
-      '<h1 id="firstHeading" class="firstHeading">Event: ' + arr2['November'][i]['title'] +'</h1>'+
+      '<h1 id="firstHeading" class="firstHeading">Event: <a href=' + arr2['November'][i]['url'] + '>' + arr2['November'][i]['title'] +'</a></h1>'+
       '<div id="bodyContent">'+
       '<p><b>Location: </b>' + arr2['November'][i]['city'] +
       '.<br><b>Hosted by:</b> ' + arr2['November'][i]['host'] +
 			'.<br><b>Dates:</b> ' + arr2['November'][i]['startDate'] + ' - ' + arr2['November'][i]['endDate'] +
       '<br><b>Length:</b> ' + arr2['November'][i]['length'] + ' Hours' +
-      '<br><b>south</b> west of the nearest large town, Alice Springs; 450&#160;km '+
-      '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-      'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-      'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-      'Aboriginal people of the area. It has many springs, waterholes, '+
-      'rock caves and ancient paintings. Uluru is listed as a World '+
-      'Heritage Site.</p>'+
-      '<p>Attribution: Uluru, <a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-      'https://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-      '(last visited June 22, 2009).</p>'+
+      '<br><b>Size:</b> about ' + arr2['November'][i]['size'] + ' people</p>'+
       '</div>'+
       '</div>');
 			}
 		}
 		for (i = 0; i <= 7; i++) {
-				GeoLocation = codeAddress(locations2[i], 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', strprint[i]);
+      if (locations2[i].indexOf('New Haven') < 0) {
+
+				GeoLocation = codeAddress(locations2[i], 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', strprint2[i]);
+      }
+      else {
+
+        strYHacks = strprint2[i];
+      }
 				//addMarker(GeoLocation);
 				console.log((i+15) + '.) ' +locations2[i]);
 			}
-			setTimeout(function(){thirdFunction(locations2)}, 3500)
+			setTimeout(function(){thirdFunction(locations2, strprint2)}, 3500)
 		}
 
-	function thirdFunction(thestuff){
+	function thirdFunction(thestuff, strprint){
 		for (i = 8; i < thestuff.length; i++) {
 		console.log((i+14) + '.) ' + thestuff[i]);
-		GeoLocation = codeAddress(thestuff[i], 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' );
+		GeoLocation = codeAddress(thestuff[i], 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', strprint[i] );
 		//addMarker(GeoLocation)
 	}
 	}
@@ -113,7 +131,7 @@
 			geocoder = new google.maps.Geocoder();
 		  var mapOptions = {
 		    zoom: 4,
-		    center: {lat: 35, lng: -97},
+		    center: {lat: 40, lng: -97},
 		    mapTypeId: google.maps.MapTypeId.TERRAIN
 		  };
 
@@ -121,7 +139,10 @@
 		      mapOptions);
 		}
 		function codeAddress(address, icon, label) {
-			var infowindow = new google.maps.InfoWindow();
+			var clicked = false;
+			var infowindow = new google.maps.InfoWindow({
+        disableAutoPan : true
+      });
 			var geocoder = new google.maps.Geocoder;
 		    geocoder.geocode( { 'address': address}, function(results, status) {
 		      if (status == google.maps.GeocoderStatus.OK) {
@@ -133,17 +154,23 @@
 	marker.addListener('mouseover', function() {
 		infowindow.setContent(label);
     infowindow.open(map, marker);
+		clicked = false;
   });
+	infowindow.addListener('click'), function() {
+		clicked = false;
+	}
 	marker.addListener('mouseout', function() {
+		if (clicked == false) {
 		infowindow.close(map, marker)
+	}
 	});
 	marker.addListener('click', function() {
-   map.panTo(marker.getPosition());
-	 map.setZoom(6)
+		clicked = true;
    infowindow.open(map, marker);
 });
+
 		      } else {
-		        alert("Geocode was not successful for the following reason: " + status + marker.getPosition);
+
 		      }
 		    });
 		  }
@@ -155,10 +182,40 @@
     //     });
     // }
 		google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+
+    window.onkeyup = function (e) {
+        var code = e.keyCode ? e.keyCode : e.which;
+        var place;
+        var userConfirm = false;
+        if (code === 40) { //down key
+        if (confirm('Would you like to add a custom event?') == true) {
+          prompt('What is the name of the event?')
+          place = prompt('What city is this event in? (Do not input an address)')
+          prompt('Who is this event hosted by?')
+          prompt('When does this event take place?')
+          prompt('How long will this event last?')
+          prompt('What is the size of this event')
+          prompt('Please paste the site URL')
+          if (place.indexOf('Kent') < 0) {
+            codeAddress(place, 'http://maps.google.com/mapfiles/ms/icons/purple-dot.png', strYHacks)
+          }
+          else {
+            codeAddress(place, 'http://maps.google.com/mapfiles/ms/icons/purple-dot.png', strKent)
+          }
+        }
+        }
+}
+
+		</script>
   </head>
   <body>
+    <div>
+    <h1 style="text-align: center; font-family: segoe script; font-weight: bolder; font-size: 64">Pool Maps</h1>
+    <p style= "text-align: center">Distributed Mapping for the Uninitiated</p>
+  </div>
 
     <div id="map"></div>
+
+
   </body>
 </html>
